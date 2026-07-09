@@ -388,12 +388,13 @@
 
   <script>
     // =====================================================
-    //  🔑  REPLACE WITH YOUR SUPABASE CREDENTIALS
+    //  🔑  YOUR SUPABASE CREDENTIALS (COPY FROM SUPABASE)
     // =====================================================
     const SUPABASE_URL = 'https://pycggnzplbnpvzccIpzv.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_hpzOtKkF-VT71s75TwkK8w_VKpHkNyg';
+    const SUPABASE_ANON_KEY = 'sb_publishable_hpzOtKkF-VT71s75TwkK8w_VKpHkNyg'; // ← YAHAN APNI POORI KEY DALEN
     // =====================================================
 
+    // ✅ EK HI BAAR DECLARE (Duplicate nahi hona chahiye)
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // DOM Elements
@@ -418,7 +419,6 @@
     function showToast(msg, type = 'success') {
       toast.className = `toast ${type}`;
       toastMessage.textContent = msg;
-      // Change icon
       const icon = toast.querySelector('i');
       if (type === 'error') {
         icon.className = 'fas fa-exclamation-circle';
@@ -462,7 +462,6 @@
     emailInput.addEventListener('blur', () => validateField(emailGroup, emailInput, 'email'));
     phoneInput.addEventListener('blur', () => validateField(phoneGroup, phoneInput, 'phone'));
 
-    // Live feedback (optional)
     nameInput.addEventListener('input', () => validateField(nameGroup, nameInput, 'text'));
     emailInput.addEventListener('input', () => validateField(emailGroup, emailInput, 'email'));
     phoneInput.addEventListener('input', () => validateField(phoneGroup, phoneInput, 'phone'));
@@ -471,21 +470,18 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // Final validation check
       const isNameValid = validateField(nameGroup, nameInput, 'text');
       const isEmailValid = validateField(emailGroup, emailInput, 'email');
       const isPhoneValid = validateField(phoneGroup, phoneInput, 'phone');
 
       if (!isNameValid || !isEmailValid || !isPhoneValid) {
         showToast('Please fix the highlighted fields before submitting.', 'error');
-        // Focus first invalid field
         if (!isNameValid) nameInput.focus();
         else if (!isEmailValid) emailInput.focus();
         else if (!isPhoneValid) phoneInput.focus();
         return;
       }
 
-      // Prepare data
       const payload = {
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
@@ -493,47 +489,48 @@
         message: messageInput.value.trim() || null,
       };
 
-      // UI Loading State
       submitBtn.disabled = true;
       submitBtn.classList.add('loading');
 
       try {
+        console.log('📤 Sending:', payload);
+
         const { data, error } = await supabase
-          .from('visitors') // Make sure this table exists!
+          .from('visitors')
           .insert([payload]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Supabase Error:', error);
+          throw error;
+        }
 
-        // Success!
+        console.log('✅ Success:', data);
         formView.style.display = 'none';
         successView.style.display = 'block';
         showToast('Information saved successfully!', 'success');
 
       } catch (err) {
-        console.error('Supabase Error:', err);
-        showToast('Something went wrong. Please try again later.', 'error');
+        console.error('❌ Error:', err);
+        showToast('Error: ' + err.message, 'error');
         submitBtn.disabled = false;
         submitBtn.classList.remove('loading');
       }
     });
 
-    // --- Reset Function (to go back) ---
+    // --- Reset Function ---
     window.resetForm = function() {
       formView.style.display = 'block';
       successView.style.display = 'none';
       form.reset();
       submitBtn.disabled = false;
       submitBtn.classList.remove('loading');
-      // Clear validation styles
       document.querySelectorAll('.input-group').forEach(g => {
         g.classList.remove('success', 'error');
       });
-      // Scroll to top of card
       document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
     };
 
-    // --- Check Supabase connection on load (optional) ---
-    console.log('🚀 Form ready. Waiting for submission.');
+    console.log('🚀 Form ready!');
   </script>
 
 </body>
