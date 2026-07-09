@@ -382,6 +382,7 @@
 
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     // =====================================================
@@ -389,6 +390,10 @@
     // =====================================================
     const SUPABASE_URL = 'https://pycggnzpblnpvzcclpzv.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_hpzOtKkF-VT71s75TwkK8w_VKpHkNyg'; // ← YAHAN APNI POORI KEY DALEN
+    const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
     // =====================================================
 
   
